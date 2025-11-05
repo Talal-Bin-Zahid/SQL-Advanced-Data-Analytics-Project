@@ -1,0 +1,31 @@
+-- Cumulative Analysis 
+-- Purpose:
+--    - To calculate running totals or moving averages for key metrics.
+--    - To track performance over time cumulatively.
+--    - Useful for growth analysis or identifying long-term trends.
+
+-- SQL Functions Used:
+--    - Window Functions: SUM() OVER(), AVG() OVER()
+
+-- Calculate the total sales per month 
+-- The cummulative total of sales over time
+
+Select DATE_TRUNC('month', order_date) AS order_month,
+SUM(sales_amount) as total_sales 
+from gold.fact_sales
+where order_date is not null
+group by order_month
+order by order_month;
+
+-- Cummulative Total Sales 
+select order_month , total_sales ,
+SUM (total_sales) over (order by order_month) as cummulative_total_sales
+from
+(
+Select DATE_TRUNC('month', order_date) AS order_month,
+SUM(sales_amount) as total_sales 
+from gold.fact_sales
+where order_date is not null
+group by order_month
+) ;
+

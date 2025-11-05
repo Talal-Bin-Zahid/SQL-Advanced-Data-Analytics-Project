@@ -3,8 +3,8 @@
 --                                 Change over time analysis
 --                                 Cumulative Analysis
 --                                 Performance Analysis
+--                                 Data Segementation
 --                                 Part to whole (Proportional Analysis)
---                                 Data SEgementation
 --                                 Reporting
 
 -- First of all , we have to create schema and Tables in our database 

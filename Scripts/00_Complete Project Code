@@ -176,3 +176,16 @@ WHERE order_date IS NOT NULL
 GROUP BY TO_CHAR(order_date, 'YYYY-Mon')
 ORDER BY TO_CHAR(order_date, 'YYYY-Mon');
 
+-- Moving average of the price
+select order_month , total_sales ,
+SUM (total_sales) over (order by order_month) as cummulative_total_sales ,
+Round(AVG(avg_price) over (order by order_month),0) as moving_average_price
+from
+(
+Select DATE_TRUNC('month', order_date) AS order_month,
+SUM(sales_amount) as total_sales ,
+AVG (price) as avg_price
+from gold.fact_sales
+where order_date is not null
+group by order_month
+) ;

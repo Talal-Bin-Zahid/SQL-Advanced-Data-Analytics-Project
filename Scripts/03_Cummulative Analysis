@@ -29,3 +29,14 @@ where order_date is not null
 group by order_month
 ) ;
 
+-- Cummulative Total Sales for each year
+select order_month , total_sales ,
+SUM (total_sales) over ( Partition by order_month order by order_month) as cummulative_total_sales
+from
+(
+Select DATE_TRUNC('month', order_date) AS order_month,
+SUM(sales_amount) as total_sales 
+from gold.fact_sales
+where order_date is not null
+group by order_month
+) ;

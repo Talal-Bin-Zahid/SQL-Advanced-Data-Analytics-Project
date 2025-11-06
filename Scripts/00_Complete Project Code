@@ -1,13 +1,13 @@
--- SQL Advanced Data Analytics Project 
--- Tasks included in the project : Database setup
---                                 Change over time analysis
---                                 Cumulative Analysis
---                                 Performance Analysis
---                                 Data Segementation
---                                 Part to whole (Proportional Analysis)
---                                 Reporting
+/* SQL Advanced Data Analytics Project 
+ Tasks included in the project: Database Setup
+                                Change over time analysis
+                                Cumulative Analysis
+                                Performance Analysis
+                                Data Segementation
+                                Part to whole (Proportional Analysis)
+                                Reporting
 
--- First of all , we have to create schema and Tables in our database 
+-- First of all , we have to create schema and Tables in our database */
 
 -- Create schema 
 CREATE SCHEMA gold;
@@ -73,17 +73,17 @@ DELIMITER ','
 CSV HEADER
 NULL '';
 
--- Now , the data is imported so we would start the analysis
+/* Now , the data is imported so we would start the analysis
 
--- Change over Time analysis 
--- Purpose:
---    - To track trends, growth, and changes in key metrics over time.
---    - For time-series analysis and identifying seasonality.
---    - To measure growth or decline over specific periods.
+ Change over Time analysis 
+ Purpose:
+   - To track trends, growth, and changes in key metrics over time.
+   - For time-series analysis and identifying seasonality.
+   - To measure growth or decline over specific periods.
 
--- SQL Functions Used:
---    - Date Functions: DATEPART(), DATETRUNC(), FORMAT()
---    - Aggregate Functions: SUM(), COUNT(), AVG()
+ SQL Functions Used:
+    - Date Functions: DATEPART(), DATETRUNC(), FORMAT()
+    - Aggregate Functions: SUM(), COUNT(), AVG() */
 
 -- Sales performance over time 
 select order_date , sales_amount from gold.fact_sales
@@ -128,15 +128,19 @@ SELECT  TO_CHAR(order_date, 'YYYY-Mon') AS order_month,
 SUM(sales_amount) AS total_sales,
 COUNT(DISTINCT customer_key) AS total_customers,
 SUM(quantity) AS total_quantity
+FROM gold.fact_sales
+WHERE order_date IS NOT NULL
+GROUP BY TO_CHAR(order_date, 'YYYY-Mon')
+ORDER BY TO_CHAR(order_date, 'YYYY-Mon');
 
--- Cumulative Analysis 
--- Purpose:
---    - To calculate running totals or moving averages for key metrics.
---    - To track performance over time cumulatively.
---    - Useful for growth analysis or identifying long-term trends.
+/* Cumulative Analysis 
+ Purpose:
+    - To calculate running totals or moving averages for key metrics.
+    - To track performance over time cumulatively.
+    - Useful for growth analysis or identifying long-term trends.
 
--- SQL Functions Used:
---    - Window Functions: SUM() OVER(), AVG() OVER()
+ SQL Functions Used:
+    - Window Functions: SUM() OVER(), AVG() OVER() */
 
 -- Calculate the total sales per month 
 -- The cummulative total of sales over time
@@ -171,10 +175,6 @@ from gold.fact_sales
 where order_date is not null
 group by order_month
 ) ;
-FROM gold.fact_sales
-WHERE order_date IS NOT NULL
-GROUP BY TO_CHAR(order_date, 'YYYY-Mon')
-ORDER BY TO_CHAR(order_date, 'YYYY-Mon');
 
 -- Moving average of the price
 select order_month , total_sales ,
@@ -184,17 +184,22 @@ from
 (
 Select DATE_TRUNC('month', order_date) AS order_month,
 SUM(sales_amount) as total_sales ,
+AVG (price) as avg_price
+from gold.fact_sales
+where order_date is not null
+group by order_month
+) ;
 
--- Performance Analysis (year on year , month on month)
--- Purpose:
---    - To measure the performance of products, customers, or regions over time.
---    - For benchmarking and identifying high-performing entities.
---    - To track yearly trends and growth.
+/* Performance Analysis (year on year , month on month)
+ Purpose:
+    - To measure the performance of products, customers, or regions over time.
+    - For benchmarking and identifying high-performing entities.
+    - To track yearly trends and growth.
 
--- SQL Functions Used:
---    - LAG(): Accesses data from previous rows.
---    - AVG() OVER(): Computes average values within partitions.
---    - CASE: Defines conditional logic for trend analysis.
+ SQL Functions Used:
+    - LAG(): Accesses data from previous rows.
+    - AVG() OVER(): Computes average values within partitions.
+    - CASE: Defines conditional logic for trend analysis. */
 
 -- Analyze the yearly performance of products by comparing their sales 
 -- Both the average sales performance of the product and the previous year's sales 
@@ -246,9 +251,39 @@ End py_change
 from yearly_product 
 order by product_name , order_year;
 
+/* Part to Whole Analysis 
+ Purpose:
+    - To compare performance or metrics across dimensions or time periods.
+    - To evaluate differences between categories.
+    - Useful for A/B testing or regional comparisons.
 
-AVG (price) as avg_price
-from gold.fact_sales
-where order_date is not null
-group by order_month
-) ;
+SQL Functions Used:
+    - SUM(), AVG(): Aggregates values for comparison.
+    - Window Functions: SUM() OVER() for total calculations. 
+*/ 
+
+-- which categories contribute the most to overall sales 
+select category , SUM(sales_amount) total_sales 
+from gold.fact_sales f
+left join gold.dim_products p
+on p.product_key = f.product_key 
+group  by category ;
+
+-- categorizing the business by percentages
+WITH category_sales AS (
+  SELECT 
+    category, 
+    SUM(sales_amount) AS total_sales 
+  FROM gold.fact_sales f
+  LEFT JOIN gold.dim_products p
+    ON p.product_key = f.product_key 
+  GROUP BY category
+)
+SELECT 
+  category, 
+  total_sales, 
+  SUM(total_sales) OVER() AS overall_sales,
+  concat(ROUND((CAST(total_sales AS numeric) / SUM(total_sales) OVER()) * 100, 2) , '%' )
+    AS percentage_of_total
+FROM category_sales;
+

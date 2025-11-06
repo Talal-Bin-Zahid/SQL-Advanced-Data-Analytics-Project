@@ -1,12 +1,14 @@
--- Change over Time analysis 
--- Purpose:
---    - To track trends, growth, and changes in key metrics over time.
---    - For time-series analysis and identifying seasonality.
---    - To measure growth or decline over specific periods.
+/* Now , the data is imported so we would start the analysis
 
--- SQL Functions Used:
---    - Date Functions: DATEPART(), DATETRUNC(), FORMAT()
---    - Aggregate Functions: SUM(), COUNT(), AVG()
+ Change over Time analysis 
+ Purpose:
+   - To track trends, growth, and changes in key metrics over time.
+   - For time-series analysis and identifying seasonality.
+   - To measure growth or decline over specific periods.
+
+ SQL Functions Used:
+    - Date Functions: DATEPART(), DATETRUNC(), FORMAT()
+    - Aggregate Functions: SUM(), COUNT(), AVG() */
 
 -- Sales performance over time 
 select order_date , sales_amount from gold.fact_sales

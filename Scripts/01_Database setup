@@ -1,13 +1,13 @@
--- SQL Advanced Data Analytics Project 
--- Tasks included in the project : Creating database , schema and tables
---                                 Change over time analysis
---                                 Cumulative Analysis
---                                 Performance Analysis
---                                 Data Segementation
---                                 Part to whole (Proportional Analysis)
---                                 Reporting
+/* SQL Advanced Data Analytics Project 
+ Tasks included in the project: Database Setup
+                                Change over time analysis
+                                Cumulative Analysis
+                                Performance Analysis
+                                Data Segementation
+                                Part to whole (Proportional Analysis)
+                                Reporting
 
--- First of all , we have to create schema and Tables in our database 
+-- First of all , we have to create schema and Tables in our database */
 
 -- Create schema 
 CREATE SCHEMA gold;

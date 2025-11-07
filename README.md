@@ -10,6 +10,7 @@ Date: 06 , November 2025
 🧠 Project Overview
 
 This project demonstrates Advanced Data Analytics using SQL (PostgreSQL) — from data modeling to analytical reporting.
+
 It focuses on performing multi-dimensional business analysis using SQL functions and techniques such as time-series analysis, cumulative and performance analytics, segmentation, and reporting through views.
 
 The dataset used in this project simulates a retail business environment, including customers, products, and sales transactions.
@@ -169,10 +170,15 @@ View created as gold.products_report for easy dashboard integration.
 Category	Key Functions Used
 
 Date/Time Analysis	DATE_TRUNC(), EXTRACT(), TO_CHAR()
+
 Aggregation	SUM(), COUNT(), AVG()
+
 Cumulative & Window Analysis	SUM() OVER(), AVG() OVER(), LAG()
+
 Conditional Logic	CASE WHEN
+
 Segmentation & Ranking	PARTITION BY, ORDER BY
+
 Data Structuring	CTEs (WITH), VIEW creation
 
 📈 Key Takeaways
